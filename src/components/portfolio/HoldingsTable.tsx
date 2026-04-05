@@ -21,7 +21,7 @@ export function HoldingsTable({ assets, onSelectAsset }: HoldingsTableProps) {
               showLabel={false}
             />
             <p className="text-zinc-500 text-xs mt-1">
-              {asset.subscribedUnits}/{asset.totalUnits} units
+              {asset.subscribedUnits}/{asset.totalUnits} subscribed
             </p>
           </div>
         );
@@ -68,7 +68,7 @@ export function HoldingsTable({ assets, onSelectAsset }: HoldingsTableProps) {
                 Property Name
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                Units Held
+                Participation Held
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                 Participation Date
@@ -145,7 +145,7 @@ export function HoldingsTable({ assets, onSelectAsset }: HoldingsTableProps) {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-4">
                 <div>
-                  <span className="text-zinc-500 text-xs">Units: </span>
+                  <span className="text-zinc-500 text-xs">Held: </span>
                   <span className="text-white">{asset.unitsHeld}</span>
                 </div>
                 <div>

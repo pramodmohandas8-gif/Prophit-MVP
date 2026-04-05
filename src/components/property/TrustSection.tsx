@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Property, formatPrice } from '@/lib/propertyData';
 import { cn } from '@/lib/utils';
 import { DocumentsModal } from '@/components/property/DocumentsModal';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 interface TrustSectionProps {
   property: Property;
@@ -153,7 +155,7 @@ function getTabContent(tab: TabType, property: Property): VerificationItem[] {
         {
           label: 'Unit Tokenization',
           status: 'verified',
-          detail: `${property.totalUnits} units at ${formatPrice(property.unitPriceInr)} each`,
+          detail: `${property.totalUnits} participation units at ${formatPrice(property.unitPriceInr)} each`,
         },
         {
           label: 'Exit Mechanism',
@@ -201,6 +203,8 @@ export function TrustSection({ property }: TrustSectionProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [docsModalOpen, setDocsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('ownership');
+  const { isSubscribed } = useSubscription();
+  const router = useRouter();
 
   const signals = getTrustSignals(property);
   return (
@@ -249,18 +253,36 @@ export function TrustSection({ property }: TrustSectionProps) {
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
           {/* View Documents */}
-          <button
-            onClick={() => setDocsModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
-                       bg-white/[0.04] border border-white/[0.08] text-zinc-300
-                       hover:bg-white/[0.06] hover:border-white/[0.12] hover:text-white
-                       transition-all duration-200"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-            </svg>
-            View Documents
-          </button>
+          {isSubscribed ? (
+            <button
+              onClick={() => setDocsModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
+                         bg-white/[0.04] border border-white/[0.08] text-zinc-300
+                         hover:bg-white/[0.06] hover:border-white/[0.12] hover:text-white
+                         transition-all duration-200"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+              </svg>
+              View Documents
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                localStorage.setItem('prophit_subscribe_return', window.location.pathname);
+                router.push('/subscribe');
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium
+                         bg-gold/[0.06] border border-gold/20 text-gold
+                         hover:bg-gold/[0.1] hover:border-gold/30
+                         transition-all duration-200"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Subscribe to View Documents
+            </button>
+          )}
 
           {/* Detailed Verification */}
           <button

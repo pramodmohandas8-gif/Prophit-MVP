@@ -131,7 +131,7 @@ export default function PortfolioPage() {
         >
           <div className="w-16 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent mx-auto mb-4" />
           <p className="text-zinc-600 text-xs leading-relaxed max-w-lg mx-auto">
-            Portfolio values are for informational purposes. Actual settlement amounts
+            Holdings values are for informational purposes. Actual settlement amounts
             may vary based on exit conditions and market factors. This is not financial advice.
           </p>
         </div>

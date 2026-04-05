@@ -87,7 +87,7 @@ export function CountdownTimer({ expiresAt, onExpire }: CountdownTimerProps) {
         'text-xs',
         isWarning ? 'text-error' : 'text-text-muted'
       )}>
-        {isWarning ? 'Hurry! Time running out' : 'Units reserved'}
+        {isWarning ? 'Hurry! Time running out' : 'Participation reserved'}
       </p>
     </div>
   );

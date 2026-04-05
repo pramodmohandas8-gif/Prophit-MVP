@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Property, formatPrice } from '@/lib/propertyData';
 import { cn } from '@/lib/utils';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 interface AssetListingCardProps {
   property: Property;
@@ -10,23 +11,14 @@ interface AssetListingCardProps {
   style?: React.CSSProperties;
 }
 
-// Calculate capital raised (mock: based on available units)
-function getCapitalRaised(property: Property): { raised: number; total: number; percent: number } {
-  const soldUnits = property.totalUnits - property.availableUnits;
-  const raised = soldUnits * property.unitPriceInr;
-  const total = property.totalUnits * property.unitPriceInr;
-  const percent = Math.round((soldUnits / property.totalUnits) * 100);
-  return { raised, total, percent };
-}
-
 export function AssetListingCard({ property, onClick, style }: AssetListingCardProps) {
-  const capital = getCapitalRaised(property);
+  const { isSubscribed } = useSubscription();
 
   // Determine status based on availability
   const status = property.availableUnits === 0 ? 'Closed' :
-                 property.availableUnits < property.totalUnits * 0.2 ? 'Closing Soon' : 'Open';
+                 property.availableUnits < property.totalUnits * 0.2 ? 'Limited Availability' : 'Open';
   const statusColor = status === 'Open' ? 'text-emerald-400' :
-                      status === 'Closing Soon' ? 'text-amber-400' : 'text-zinc-500';
+                      status === 'Limited Availability' ? 'text-amber-400' : 'text-zinc-500';
 
   return (
     <article
@@ -49,10 +41,15 @@ export function AssetListingCard({ property, onClick, style }: AssetListingCardP
           {/* Left: Name + Location */}
           <div className="flex-1 min-w-0">
             <h3 className="text-white text-sm font-medium leading-tight truncate">
-              {property.title}
+              {isSubscribed ? property.title : (
+                <>
+                  {property.title.split(' ').slice(0, 2).join(' ')}{' '}
+                  <span className="select-none blur-[5px]">{property.title.split(' ').slice(2).join(' ')}</span>
+                </>
+              )}
             </h3>
             <p className="text-zinc-500 text-xs mt-0.5">
-              {property.locality}, {property.city}
+              {isSubscribed ? `${property.locality}, ${property.city}` : property.city}
             </p>
           </div>
 
@@ -127,7 +124,7 @@ export function AssetListingCard({ property, onClick, style }: AssetListingCardP
           ═══════════════════════════════════════════════════════════════ */}
       <div className="px-4 py-4 border-b border-white/[0.04]">
         {/* Unit Price - PRIMARY ANCHOR */}
-        <div className="flex items-baseline justify-between mb-3">
+        <div className="flex items-baseline justify-between">
           <div>
             <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-0.5">Unit Price</p>
             <p className="text-gold text-2xl font-semibold tracking-tight">
@@ -137,26 +134,13 @@ export function AssetListingCard({ property, onClick, style }: AssetListingCardP
           <div className="text-right">
             <p className="text-zinc-500 text-[10px] uppercase tracking-wider mb-0.5">Available</p>
             <p className="text-white text-lg font-medium">
-              {property.availableUnits}<span className="text-zinc-600">/{property.totalUnits}</span>
+              {isSubscribed ? (
+                <>{property.availableUnits}<span className="text-zinc-600">/{property.totalUnits}</span></>
+              ) : (
+                <><span className="select-none blur-[5px]">{'XX'}</span><span className="text-zinc-600">/{property.totalUnits}</span></>
+              )}
             </p>
           </div>
-        </div>
-
-        {/* Capital Raised Progress */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-zinc-500">Capital Raised</span>
-            <span className="text-zinc-400">
-              {formatPrice(capital.raised)} <span className="text-zinc-600">of {formatPrice(capital.total)}</span>
-            </span>
-          </div>
-          <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-gold/60 to-gold transition-all duration-500"
-              style={{ width: `${capital.percent}%` }}
-            />
-          </div>
-          <p className="text-zinc-600 text-[10px] text-right">{capital.percent}% subscribed</p>
         </div>
       </div>
 

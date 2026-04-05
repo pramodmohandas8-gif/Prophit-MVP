@@ -108,7 +108,7 @@ export default function ConfirmationPage() {
 
               {/* Units */}
               <div className="flex justify-between items-center py-3 border-t border-gold/5">
-                <span className="text-text-muted text-sm">Units Purchased</span>
+                <span className="text-text-muted text-sm">Participation Confirmed</span>
                 <span className="text-white font-medium">{state.units}</span>
               </div>
 
@@ -158,7 +158,7 @@ export default function ConfirmationPage() {
             className="w-full"
             onClick={isSuccess ? handleGoToPortfolio : handleBackToDashboard}
           >
-            {isSuccess ? 'Go to Portfolio' : 'Back to Dashboard'}
+            {isSuccess ? 'Go to Holdings' : 'Back to Dashboard'}
           </Button>
 
           {/* Support Link */}

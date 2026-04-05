@@ -19,7 +19,7 @@ export function SubscriptionProgressBar({
         <div className="flex items-center justify-between text-xs">
           <span className="text-zinc-400">Subscription Progress</span>
           <span className="text-white font-medium">
-            {subscribedUnits} / {totalUnits} Units
+            {subscribedUnits} / {totalUnits} Subscribed
           </span>
         </div>
       )}

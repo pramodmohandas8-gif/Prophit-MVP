@@ -313,7 +313,7 @@ export default function PhonePage() {
 
           {/* Testimonial */}
           <p className="text-text-muted text-xs text-center mt-4 italic opacity-70">
-            <span className="text-gold/60">&ldquo;</span>Transformed my portfolio in 6 months<span className="text-gold/60">&rdquo;</span>
+            <span className="text-gold/60">&ldquo;</span>Transformed my holdings in 6 months<span className="text-gold/60">&rdquo;</span>
             <span className="text-text-secondary not-italic"> — Rajesh M.</span>
           </p>
         </div>

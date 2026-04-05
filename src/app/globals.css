@@ -1263,17 +1263,21 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 20px;
-  min-height: 180px;
 }
 
 /* Individual stat card */
 .social-proof-stat {
   text-align: center;
-  padding: 14px 8px;
+  padding: 16px 8px;
   border-radius: 12px;
   background: rgba(201, 169, 98, 0.02);
   border: 1px solid var(--border-subtle);
   will-change: transform, opacity;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1.6;
 }
 
 .social-proof-value {

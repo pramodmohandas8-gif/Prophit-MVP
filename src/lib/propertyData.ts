@@ -19,7 +19,8 @@ export type AssetType =
   | 'Developer Plot'
   | 'Leasehold Plot'
   | 'Special Allotment'
-  | 'Residential Plot';
+  | 'Residential Plot'
+  | 'Commercial';
 
 // Structured document for the documents modal
 export interface PropertyDocument {
@@ -616,11 +617,11 @@ export const properties: Property[] = [
     ],
     layoutApproved: true,
     locationHighlights: [
-      'Adjacent to Kota Industrial Area — major employment hub',
-      '4 km from Kota Junction (railway) — inter-city connectivity',
-      'NH-27 (Kota–Jhalawar Highway) access within 2 km',
-      'Kota\'s education corridor — proximity to coaching institutes driving residential demand',
-      'Upcoming Chambal Expressway corridor — long-term appreciation driver',
+      'Adjacent to Kota Industrial Area, a major employment hub',
+      '4 km from Kota Junction railway station',
+      'NH-27 (Kota–Jhalawar Highway) within 2 km',
+      'Near Kota\'s education corridor with coaching institutes driving residential demand',
+      'Upcoming Chambal Expressway corridor as long-term appreciation driver',
     ],
     trustSignals: [
       { title: 'Ownership Verified', helper: 'Based on registered sale deed and patta' },
@@ -666,6 +667,92 @@ export const properties: Property[] = [
       },
     ],
   },
+  {
+    id: 'CI1',
+    title: 'Chaandrai Icon \u2014 Somwar Peth',
+    city: 'Pune',
+    locality: 'Narpatgiri Chowk, Somwar Peth, Pune',
+    assetType: 'Commercial',
+    sizeSqm: 240,
+    tenureType: 'Freehold',
+    allotmentRef: 'CC/0287/25',
+    issuingAuthority: 'Pune Municipal Corporation',
+    exitType: 'Developer Buyback',
+    buybackClausePresent: true,
+    escrowAmountInr: 11600000,
+    escrowBankName: 'TJSB Sahakari Bank Ltd',
+    reraNumber: 'PM1260002500139',
+    titleClearance: true,
+    ecLast30Yrs: true,
+    developerName: 'Chaandrai Construction SS LLP',
+    developerNetWorthInr: 0,
+    developerDebtToEquity: 0,
+    projectedHoldingPeriodYears: 1,
+    priceMinInr: 11600000,
+    priceMaxInr: 21200000,
+    riskScore: 78,
+    riskBand: 'Low',
+    docs: ['project-deck.pdf', 'developer-due-diligence.pdf', 'technical-due-diligence.pdf', 'title-search-report.pdf', 'rera-certificate.pdf', 'valuation-report.pdf'],
+    siteLat: 18.5195,
+    siteLng: 73.8591,
+    shortRationale: 'MahaRERA-registered commercial shops in Somwar Peth, Pune. Developer buyback at ₹1.40 Cr in 12 months. Acquired at 45% below market value. Title verified, litigation-free, commencement certificate obtained.',
+    image: '/properties/ci1/hero.jpg',
+    growthPercent: 8,
+    growthPeriodYears: 2,
+    growthSource: 'NoBroker / 99acres',
+    unitPriceInr: 50000,
+    totalUnits: 232,
+    availableUnits: 180,
+    minUnits: 1,
+    maxUnitsPerTx: 50,
+    images: [
+      '/properties/ci1/hero.jpg',
+    ],
+    layoutApproved: true,
+    locationHighlights: [
+      'Intersection of Somwar Peth and Rasta Peth, Pune\'s oldest commercial hub',
+      'Walking distance to Laxmi Road, one of India\'s busiest retail corridors',
+      'Kasba Peth Metro station 4 min walk (Purple Line)',
+      'Pune Railway Station within 2 km',
+      'Surrounded by Tulshibaug, Mandai, and SGS Mall with high daily footfall',
+    ],
+    trustSignals: [
+      { title: 'Title Verified', helper: 'Legal scrutiny report by Abhita Property Solutions (registered valuer)' },
+      { title: 'MahaRERA Registered', helper: 'PM1260002500139' },
+      { title: 'Developer Due Diligence Clear', helper: 'SignalX risk score 94.74/100, no litigation, no defaults' },
+      { title: 'Commencement Certificate Obtained', helper: 'CC/0287/25 issued by Pune Municipal Corporation' },
+      { title: 'Pre-signed Buyback Agreement', helper: 'Developer buyback at ₹27,379/sq ft in 12 months' },
+      { title: 'Government Approved Valuation', helper: 'Fair market value ₹9.30 Cr (independent valuer)' },
+    ],
+    documentCategories: [
+      {
+        category: 'Project Overview',
+        documents: [
+          { title: 'Project Deck', description: 'Deal specifics, pricing, location, and participation structure for Chaandrai Icon', file: '/properties/ci1/docs/project-deck.pdf' },
+        ],
+      },
+      {
+        category: 'Legal & Title',
+        documents: [
+          { title: 'Title & Search Report', description: 'Legal scrutiny report with full chain of title for Final Plot No. 6, TPS-2, Somwar Peth', file: '/properties/ci1/docs/title-search-report.pdf' },
+          { title: 'MahaRERA Certificate', description: 'MahaRERA registration certificate (PM1260002500139)', file: '/properties/ci1/docs/rera-certificate.pdf' },
+        ],
+      },
+      {
+        category: 'Due Diligence',
+        documents: [
+          { title: 'Developer Due Diligence', description: 'Third-party risk assessment by SignalX covering financial health, litigation, compliance, and market sentiment', file: '/properties/ci1/docs/developer-due-diligence.pdf' },
+          { title: 'Technical Due Diligence', description: 'Technical assessment of construction, approvals, and infrastructure for Chaandrai Icon', file: '/properties/ci1/docs/technical-due-diligence.pdf' },
+        ],
+      },
+      {
+        category: 'Valuation',
+        documents: [
+          { title: 'Valuation Report', description: 'Government-approved valuer report confirming fair market value of ₹9.30 Cr', file: '/properties/ci1/docs/valuation-report.pdf' },
+        ],
+      },
+    ],
+  },
 ];
 
 // Risk score breakdowns (for "Why this score?" expandable card)
@@ -683,6 +770,7 @@ export const riskBreakdowns: Record<string, RiskBreakdown> = {
   D11: { legalClarity: 22, exitEnforceability: 12, promoterStrength: 9, regulatoryMaturity: 8, marketDemand: 6 },
   D12: { legalClarity: 25, exitEnforceability: 16, promoterStrength: 0, regulatoryMaturity: 13, marketDemand: 12 },
   SGC1: { legalClarity: 24, exitEnforceability: 16, promoterStrength: 11, regulatoryMaturity: 9, marketDemand: 8 },
+  CI1:  { legalClarity: 27, exitEnforceability: 20, promoterStrength: 12, regulatoryMaturity: 10, marketDemand: 9 },
 };
 
 // Format price in Indian notation (Lakhs / Crores)

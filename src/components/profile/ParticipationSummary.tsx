@@ -59,7 +59,7 @@ export function ParticipationSummary() {
 
   const statItems = [
     {
-      label: 'Total Units Held',
+      label: 'Total Participation',
       value: stats.totalUnitsHeld.toString(),
     },
     {

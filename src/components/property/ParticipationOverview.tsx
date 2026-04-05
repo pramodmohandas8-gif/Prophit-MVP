@@ -1,12 +1,14 @@
 'use client';
 
 import { Property, formatPrice } from '@/lib/propertyData';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 interface ParticipationOverviewProps {
   property: Property;
 }
 
 export function ParticipationOverview({ property }: ParticipationOverviewProps) {
+  const { isSubscribed } = useSubscription();
   const soldUnits = property.totalUnits - property.availableUnits;
   const soldPercent = Math.round((soldUnits / property.totalUnits) * 100);
 
@@ -22,7 +24,9 @@ export function ParticipationOverview({ property }: ParticipationOverviewProps) 
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-zinc-400 text-sm">Subscription Progress</span>
-            <span className="text-white text-sm font-medium">{soldPercent}%</span>
+            <span className={`text-white text-sm font-medium ${!isSubscribed ? 'select-none blur-[5px]' : ''}`}>
+              {isSubscribed ? `${soldPercent}%` : 'XX%'}
+            </span>
           </div>
           <div className="h-3 bg-zinc-800 rounded-full overflow-hidden">
             <div
@@ -41,26 +45,26 @@ export function ParticipationOverview({ property }: ParticipationOverviewProps) 
             <p className="text-2xl font-semibold text-white mb-1">
               {property.totalUnits}
             </p>
-            <p className="text-zinc-500 text-xs">Total Units</p>
+            <p className="text-zinc-500 text-xs">Total Participation</p>
           </div>
 
           <div className="text-center p-4 bg-white/[0.02] rounded-lg">
-            <p className="text-2xl font-semibold text-emerald-400 mb-1">
-              {soldUnits}
+            <p className={`text-2xl font-semibold text-emerald-400 mb-1 ${!isSubscribed ? 'select-none blur-[6px]' : ''}`}>
+              {isSubscribed ? soldUnits : '??'}
             </p>
-            <p className="text-zinc-500 text-xs">Units Subscribed</p>
+            <p className="text-zinc-500 text-xs">Subscribed</p>
           </div>
 
           <div className="text-center p-4 bg-white/[0.02] rounded-lg">
-            <p className="text-2xl font-semibold text-gold mb-1">
-              {property.availableUnits}
+            <p className={`text-2xl font-semibold text-gold mb-1 ${!isSubscribed ? 'select-none blur-[6px]' : ''}`}>
+              {isSubscribed ? property.availableUnits : '??'}
             </p>
-            <p className="text-zinc-500 text-xs">Units Available</p>
+            <p className="text-zinc-500 text-xs">Available</p>
           </div>
 
           <div className="text-center p-4 bg-white/[0.02] rounded-lg">
-            <p className="text-2xl font-semibold text-white mb-1">
-              {investorCount}
+            <p className={`text-2xl font-semibold text-white mb-1 ${!isSubscribed ? 'select-none blur-[6px]' : ''}`}>
+              {isSubscribed ? investorCount : '??'}
             </p>
             <p className="text-zinc-500 text-xs">Participants</p>
           </div>
@@ -70,14 +74,14 @@ export function ParticipationOverview({ property }: ParticipationOverviewProps) 
         <div className="mt-6 pt-6 border-t border-white/[0.06] grid grid-cols-2 gap-6">
           <div>
             <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Capital Raised</p>
-            <p className="text-white text-lg font-medium">
-              {formatPrice(soldUnits * property.unitPriceInr)}
+            <p className={`text-white text-lg font-medium ${!isSubscribed ? 'select-none blur-[6px]' : ''}`}>
+              {isSubscribed ? formatPrice(soldUnits * property.unitPriceInr) : '₹XX.X Cr'}
             </p>
           </div>
           <div>
             <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Target Size</p>
-            <p className="text-white text-lg font-medium">
-              {formatPrice(property.totalUnits * property.unitPriceInr)}
+            <p className={`text-white text-lg font-medium ${!isSubscribed ? 'select-none blur-[6px]' : ''}`}>
+              {isSubscribed ? formatPrice(property.totalUnits * property.unitPriceInr) : '₹XX.X Cr'}
             </p>
           </div>
         </div>

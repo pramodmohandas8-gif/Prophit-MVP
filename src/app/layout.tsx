@@ -4,6 +4,7 @@ import "./globals.css";
 import { FlowProvider } from "@/context/FlowContext";
 import { TransactionProvider } from "@/context/TransactionContext";
 import { KYCProvider } from "@/context/KYCContext";
+import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import { LuxuryWatermark } from "@/components/LuxuryWatermark";
 // import { PrestigeToggle } from "@/components/PrestigeToggle";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
@@ -52,6 +53,9 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Prophit | Premium Real Estate Participation",
   description: "Your exclusive portal to premium real estate opportunities in India. Secured, seamless, and institutional-grade.",
+  icons: {
+    icon: '/icon.svg',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -95,9 +99,11 @@ export default function RootLayout({
         <FlowProvider>
           <TransactionProvider>
             <KYCProvider>
-              <main className="relative z-10 min-h-screen">
-                {children}
-              </main>
+              <SubscriptionProvider>
+                <main className="relative z-10 min-h-screen">
+                  {children}
+                </main>
+              </SubscriptionProvider>
             </KYCProvider>
           </TransactionProvider>
         </FlowProvider>

@@ -83,7 +83,7 @@ export function AssetDetailView({ asset, onClose }: AssetDetailViewProps) {
                 <span className="text-white text-sm">{formatCurrency(asset.unitPrice)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-500 text-sm">Units Held</span>
+                <span className="text-zinc-500 text-sm">Participation Held</span>
                 <span className="text-white text-sm">{asset.unitsHeld}</span>
               </div>
               <div className="h-px bg-white/[0.04]" />

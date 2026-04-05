@@ -1,36 +1,34 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { useFlow } from '@/context/FlowContext';
 import { useKYC } from '@/context/KYCContext';
+import { useSubscription } from '@/context/SubscriptionContext';
 import { properties } from '@/lib/propertyData';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssetListingCard } from '@/components/AssetListingCard';
 
 // Time-aware greeting
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+  if (hour < 12) return 'Good Morning';
+  if (hour < 17) return 'Good Afternoon';
+  return 'Good Evening';
 }
 
-// Get unique asset type categories
-const CATEGORIES = ['All', ...Array.from(new Set(properties.map(p => {
-  if (p.exitType.includes('Government')) return 'Government';
-  if (p.assetType.includes('Industrial')) return 'Industrial';
-  if (p.assetType.includes('Residential')) return 'Residential';
-  if (p.assetType.includes('Developer')) return 'Developer';
-  return 'Other';
-})))];
+// Visible listings — ordered. Others are hidden, not deleted.
+const VISIBLE_IDS = ['SGC1', 'CI1', 'D1', 'D2', 'D4', 'D9'];
+const visibleProperties = VISIBLE_IDS
+  .map(id => properties.find(p => p.id === id))
+  .filter((p): p is typeof properties[number] => !!p);
+
 
 export default function DashboardPage() {
   const router = useRouter();
   const { state, reset } = useFlow();
   const { isKYCComplete, setReturnUrl } = useKYC();
-  const [activeTab, setActiveTab] = useState('All');
+  const { isSubscribed } = useSubscription();
 
   const handleCompleteKYC = () => {
     setReturnUrl('/dashboard');
@@ -49,16 +47,24 @@ export default function DashboardPage() {
     router.push('/');
   };
 
-  // Filter properties by category
-  const filteredProperties = activeTab === 'All'
-    ? properties
-    : properties.filter(p => {
-        if (activeTab === 'Government') return p.exitType.includes('Government');
-        if (activeTab === 'Industrial') return p.assetType.includes('Industrial');
-        if (activeTab === 'Residential') return p.assetType.includes('Residential');
-        if (activeTab === 'Developer') return p.assetType.includes('Developer') || p.developerName;
-        return true;
-      });
+  const filteredProperties = visibleProperties;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [highlightKYC, setHighlightKYC] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+        setHighlightKYC(false);
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [menuOpen]);
 
   return (
     <div className="min-h-screen flex flex-col px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto safe-top safe-bottom">
@@ -66,115 +72,121 @@ export default function DashboardPage() {
       <header className="flex items-center justify-between mb-8 page-transition sticky top-0 z-20 py-4 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-titanium-deep/80 backdrop-blur-xl border-b border-white/[0.03]">
         <Logo className="w-36 h-6 sm:w-40 sm:h-7" variant="dark" />
 
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Portfolio Link */}
+        {/* Avatar + Dropdown Menu */}
+        <div className="relative" ref={menuRef}>
           <button
-            onClick={() => router.push('/portfolio')}
-            className="text-text-muted hover:text-gold text-sm transition-all duration-300 py-2 px-3 min-h-[44px] flex items-center gap-1.5 rounded-lg hover:bg-white/[0.03]"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex items-center gap-2.5 py-2 px-2 sm:px-3 rounded-lg hover:bg-white/[0.03] transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-            <span className="hidden sm:inline">Portfolio</span>
-          </button>
-
-          {/* User Avatar - Links to Profile */}
-          <button
-            onClick={() => router.push('/profile')}
-            className="flex items-center gap-3 py-2 px-2 sm:px-3 rounded-lg hover:bg-white/[0.03] transition-colors"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold/30 to-gold-dark/30 border border-gold/20 flex items-center justify-center">
-              <span className="text-gold text-xs font-semibold">
-                {state.displayName?.charAt(0)?.toUpperCase()}
-              </span>
+            <div className="relative">
+              <div
+                className={`w-8 h-8 rounded-full bg-gradient-to-br from-gold/30 to-gold-dark/30 flex items-center justify-center transition-all duration-300 ${isSubscribed ? 'border-2 border-gold/60 shadow-[0_0_8px_rgba(201,169,98,0.3)]' : 'border border-white/10'}`}
+              >
+                <span className="text-gold text-xs font-semibold">
+                  {state.displayName?.charAt(0)?.toUpperCase()}
+                </span>
+              </div>
+              {!isKYCComplete && (
+                <button
+                  className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 min-w-0 min-h-0 p-0 rounded-full bg-amber-400 border-2 border-[#0a0a0a] cursor-pointer"
+                  onClick={(e) => { e.stopPropagation(); setMenuOpen(true); setHighlightKYC(true); }}
+                />
+              )}
             </div>
-            <span className="hidden sm:block text-text-secondary text-sm">{state.displayName}</span>
+            <svg className={`w-3.5 h-3.5 text-zinc-500 transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
-          <button
-            onClick={handleLogout}
-            className="text-text-muted hover:text-gold text-sm transition-all duration-300 py-2 px-3 min-h-[44px] flex items-center gap-1.5 rounded-lg hover:bg-white/[0.03]"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span className="hidden sm:inline">Logout</span>
-          </button>
+          {/* Dropdown */}
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-2 w-56 bg-[#111] border border-white/[0.08] rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50">
+              {/* User Info */}
+              <div className="px-4 py-3 border-b border-white/[0.06]">
+                <p className="text-white text-sm font-medium">{state.displayName}</p>
+                {isSubscribed && (
+                  <p className="text-gold text-[11px] mt-0.5">Prophit Access Member</p>
+                )}
+              </div>
+
+              <div className="py-1.5">
+                {/* Complete KYC - only if not completed */}
+                {!isKYCComplete && (
+                  <button
+                    onClick={() => { setMenuOpen(false); setHighlightKYC(false); handleCompleteKYC(); }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${highlightKYC ? 'bg-gold/[0.08]' : 'hover:bg-white/[0.04]'}`}
+                  >
+                    <svg className="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span className="text-gold text-sm font-medium">Complete KYC</span>
+                  </button>
+                )}
+
+                {/* Holdings */}
+                <button
+                  onClick={() => { setMenuOpen(false); router.push('/portfolio'); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] transition-colors"
+                >
+                  <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                  <span className="text-zinc-300 text-sm">Holdings</span>
+                </button>
+
+                {/* Profile */}
+                <button
+                  onClick={() => { setMenuOpen(false); router.push('/profile'); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] transition-colors"
+                >
+                  <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="text-zinc-300 text-sm">Profile</span>
+                </button>
+              </div>
+
+              {/* Logout */}
+              <div className="border-t border-white/[0.06] py-1.5">
+                <button
+                  onClick={() => { setMenuOpen(false); handleLogout(); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] transition-colors"
+                >
+                  <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span className="text-zinc-500 text-sm">Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Welcome Hero Banner */}
-      <section className="glass-card-hero p-6 sm:p-8 mb-8" style={{ opacity: 0, animation: 'fadeInUp 0.6s ease-out 0.1s forwards' }}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p className="text-text-muted text-micro uppercase tracking-widest mb-2">{getGreeting()}</p>
-            <h1 className="text-display text-white font-display">
-              {state.displayName}, <span className="text-shimmer-gold">your portfolio awaits</span>
-            </h1>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="flex items-center gap-6">
-            {[
-              { value: properties.length.toString(), label: 'Assets' },
-              { value: '8', label: 'Cities' },
-              { value: '42%', label: 'Avg Growth' },
-            ].map((stat, i) => (
-              <div key={stat.label} className="text-center" style={{ opacity: 0, animation: `fadeInUp 0.4s ease-out ${0.3 + i * 0.1}s forwards` }}>
-                <p className="text-gold font-display text-xl font-light">{stat.value}</p>
-                <p className="text-text-ghost text-micro uppercase tracking-wider">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* KYC Banner - Show if not completed */}
-      {!isKYCComplete && (
-        <section
-          className="mb-6 p-4 bg-gold/5 border border-gold/20 rounded-xl"
-          style={{ opacity: 0, animation: 'fadeInUp 0.5s ease-out 0.2s forwards' }}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white text-sm font-medium">Complete your KYC</p>
-                <p className="text-zinc-500 text-xs">Verify your identity to participate in opportunities</p>
-              </div>
-            </div>
-            <button
-              onClick={handleCompleteKYC}
-              className="px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 shrink-0"
-              style={{
-                background: 'linear-gradient(135deg, rgba(201, 169, 98, 0.9), rgba(178, 144, 70, 0.9))',
-                color: '#0a0a0a',
-              }}
-            >
-              Complete KYC
-            </button>
-          </div>
-        </section>
-      )}
-
-      {/* Category Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-        <TabsList className="bg-titanium-surface/50 border border-white/[0.04] h-10 p-1">
-          {CATEGORIES.map(cat => (
-            <TabsTrigger
-              key={cat}
-              value={cat}
-              className="text-xs data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:shadow-none transition-all duration-300"
-            >
-              {cat}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      {/* Greeting Banner */}
+      <div
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 mb-6 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+        style={{ opacity: 0, animation: 'fadeInUp 0.4s ease-out 0.1s forwards' }}
+      >
+        <h1 className="text-white text-lg sm:text-xl font-display">
+          {getGreeting()}, <span className="text-shimmer-gold">{state.displayName}</span>
+        </h1>
+        {!isSubscribed && (
+          <button
+            onClick={() => router.push('/subscribe')}
+            className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-all duration-300 shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, rgba(201, 169, 98, 0.9), rgba(178, 144, 70, 0.9))',
+              color: '#0a0a0a',
+            }}
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Unlock Full Access
+          </button>
+        )}
+      </div>
 
       {/* Asset Listings Grid */}
       <section className="flex-1">

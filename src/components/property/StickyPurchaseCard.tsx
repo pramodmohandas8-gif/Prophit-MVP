@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Property, formatPrice } from '@/lib/propertyData';
+import { useSubscription } from '@/context/SubscriptionContext';
 
 interface StickyPurchaseCardProps {
   property: Property;
@@ -26,15 +27,21 @@ function getSimpleExitLabel(exitType: string): string {
 }
 
 export function StickyPurchaseCard({ property, onBuyUnits, isKYCComplete = false }: StickyPurchaseCardProps) {
+  const { isSubscribed } = useSubscription();
   return (
     <div className="bg-[#0c0c0c] border border-white/[0.08] rounded-2xl overflow-hidden">
       {/* Header */}
       <div className="p-5 border-b border-white/[0.06]">
         <h1 className="text-white text-lg font-medium leading-tight mb-1">
-          {property.title}
+          {isSubscribed ? property.title : (
+            <>
+              {property.title.split(' ').slice(0, 2).join(' ')}{' '}
+              <span className="select-none blur-[5px]">{property.title.split(' ').slice(2).join(' ')}</span>
+            </>
+          )}
         </h1>
         <p className="text-zinc-500 text-sm">
-          {property.locality}, {property.city}
+          {isSubscribed ? `${property.locality}, ${property.city}` : property.city}
         </p>
       </div>
 
@@ -78,7 +85,7 @@ export function StickyPurchaseCard({ property, onBuyUnits, isKYCComplete = false
           {property.availableUnits === 0
             ? 'Fully Subscribed'
             : isKYCComplete
-            ? 'Buy Units'
+            ? 'Participate'
             : 'Complete KYC'}
         </Button>
 

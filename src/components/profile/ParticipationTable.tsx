@@ -80,7 +80,7 @@ export function ParticipationTable() {
         </div>
         <p className="text-zinc-500 text-sm mb-2">No participations yet</p>
         <p className="text-zinc-600 text-xs">
-          Your investment history will appear here
+          Your participation history will appear here
         </p>
       </div>
     );
@@ -97,7 +97,7 @@ export function ParticipationTable() {
                 Property Name
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                Units Held
+                Participation Held
               </th>
               <th className="px-6 py-4 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider">
                 Participation Date
@@ -156,7 +156,7 @@ export function ParticipationTable() {
             </div>
             <div className="flex items-center justify-between text-sm">
               <div>
-                <span className="text-zinc-500">{participation.unitsHeld} units</span>
+                <span className="text-zinc-500">{participation.unitsHeld} held</span>
                 <span className="text-zinc-600 mx-2">·</span>
                 <span className="text-zinc-500">{formatDate(participation.participationDate)}</span>
               </div>

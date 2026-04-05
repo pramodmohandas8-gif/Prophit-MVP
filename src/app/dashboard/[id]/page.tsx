@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import { useFlow } from '@/context/FlowContext';
 import { useKYC } from '@/context/KYCContext';
+import { useSubscription } from '@/context/SubscriptionContext';
 import { getPropertyById, formatPrice } from '@/lib/propertyData';
 import { BuyUnitsModal } from '@/components/transaction/BuyUnitsModal';
 
@@ -22,6 +23,7 @@ export default function PropertyDetailPage() {
   const params = useParams();
   const { state } = useFlow();
   const { isKYCComplete, setReturnUrl } = useKYC();
+  const { isSubscribed } = useSubscription();
   const [buyModalOpen, setBuyModalOpen] = useState(false);
 
   const property = getPropertyById(params.id as string);
@@ -96,8 +98,15 @@ export default function PropertyDetailPage() {
             {/* Property Quick Info - Desktop */}
             <div className="hidden md:flex items-center gap-6">
               <div className="text-right">
-                <p className="text-white text-sm font-medium truncate max-w-[200px]">{property.title}</p>
-                <p className="text-zinc-500 text-xs">{property.locality}, {property.city}</p>
+                <p className="text-white text-sm font-medium truncate max-w-[200px]">
+                  {isSubscribed ? property.title : (
+                    <>
+                      {property.title.split(' ').slice(0, 2).join(' ')}{' '}
+                      <span className="select-none blur-[5px]">{property.title.split(' ').slice(2).join(' ')}</span>
+                    </>
+                  )}
+                </p>
+                <p className="text-zinc-500 text-xs">{isSubscribed ? `${property.locality}, ${property.city}` : property.city}</p>
               </div>
               <div className="h-8 w-px bg-white/10" />
               <div className="text-right">
@@ -127,8 +136,15 @@ export default function PropertyDetailPage() {
 
             {/* Mobile-only: Property Title + Price */}
             <section className="lg:hidden" style={{ opacity: 0, animation: 'fadeInUp 0.5s ease-out 0.2s forwards' }}>
-              <h1 className="text-white text-xl font-semibold mb-1">{property.title}</h1>
-              <p className="text-zinc-500 text-sm mb-4">{property.locality}, {property.city}</p>
+              <h1 className="text-white text-xl font-semibold mb-1">
+                {isSubscribed ? property.title : (
+                  <>
+                    {property.title.split(' ').slice(0, 2).join(' ')}{' '}
+                    <span className="select-none blur-[5px]">{property.title.split(' ').slice(2).join(' ')}</span>
+                  </>
+                )}
+              </h1>
+              <p className="text-zinc-500 text-sm mb-4">{isSubscribed ? `${property.locality}, ${property.city}` : property.city}</p>
               <div className="flex items-baseline gap-3">
                 <span className="text-gold text-2xl font-semibold">{formatPrice(property.unitPriceInr)}</span>
                 <span className="text-zinc-500 text-sm">per unit</span>
@@ -198,7 +214,7 @@ export default function PropertyDetailPage() {
             </div>
             <div className="text-right">
               <p className="text-zinc-500 text-xs">Available</p>
-              <p className="text-white text-sm font-medium">{property.availableUnits} units</p>
+              <p className="text-white text-sm font-medium">{property.availableUnits} available</p>
             </div>
           </div>
           <button
@@ -215,7 +231,7 @@ export default function PropertyDetailPage() {
             {property.availableUnits === 0
               ? 'Sold Out'
               : isKYCComplete
-              ? 'Buy Units'
+              ? 'Participate'
               : 'Complete KYC'}
           </button>
         </div>

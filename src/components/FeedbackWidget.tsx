@@ -10,7 +10,7 @@ const ROUTE_NAMES: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/kyc': 'KYC',
   '/profile': 'Profile',
-  '/portfolio': 'Portfolio',
+  '/portfolio': 'Holdings',
   '/skills': 'Skills',
   '/deck': 'Deck',
 };

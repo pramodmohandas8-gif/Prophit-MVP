@@ -49,7 +49,7 @@ export function BuyUnitsModal({ property, open, onOpenChange }: BuyUnitsModalPro
         {/* Header */}
         <DialogHeader className="p-6 pb-0">
           <DialogTitle className="heading-luxury text-lg text-white">
-            Buy Units
+            Participate
           </DialogTitle>
           <p className="text-text-muted text-sm mt-1">{property.title}</p>
         </DialogHeader>
@@ -62,7 +62,7 @@ export function BuyUnitsModal({ property, open, onOpenChange }: BuyUnitsModalPro
               <span className="text-gold font-semibold">{formatPrice(property.unitPriceInr)}</span>
             </div>
             <div className="flex justify-between items-center mt-2">
-              <span className="text-text-muted text-sm">Available units</span>
+              <span className="text-text-muted text-sm">Available participation</span>
               <span className="text-text-secondary">{property.availableUnits} / {property.totalUnits}</span>
             </div>
           </div>
@@ -131,7 +131,7 @@ export function BuyUnitsModal({ property, open, onOpenChange }: BuyUnitsModalPro
               </div>
             </div>
             <span className="text-text-secondary text-sm leading-relaxed">
-              I acknowledge this is a participation in an SPV representing fractional ownership of the property.
+              I acknowledge this is a structured participation in an SPV holding the property.
             </span>
           </label>
 
@@ -148,7 +148,7 @@ export function BuyUnitsModal({ property, open, onOpenChange }: BuyUnitsModalPro
 
           {/* Disclaimer */}
           <p className="text-text-muted text-xs text-center">
-            Units will be reserved for 10 minutes during payment
+            Participation will be reserved for 10 minutes during payment
           </p>
         </div>
       </DialogContent>

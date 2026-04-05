@@ -10,7 +10,7 @@ interface SocialProofModalProps {
 const ALL_STATS = [
   { value: '\u20B9500 Cr+', label: 'Assets Under Management' },
   { value: '4.8/5', label: 'Verified Member Rating' },
-  { value: '12,000+', label: 'Active Portfolio Holders' },
+  { value: '12,000+', label: 'Active Participants' },
   { value: '98.7%', label: 'Client Satisfaction Rate' },
   { value: '350+', label: 'Premium Deals Closed' },
   { value: '42', label: 'Cities Covered' },

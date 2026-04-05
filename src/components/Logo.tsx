@@ -30,11 +30,11 @@ export function Logo({ className = '', variant = 'dark' }: LogoProps) {
 
       {/* Golden Devanagari र (ra) */}
       <text
-        x="20.5"
+        x="22.5"
         y="36"
         fontFamily="var(--font-devanagari), 'Noto Sans Devanagari', 'Mangal', sans-serif"
         fontWeight="700"
-        fontSize="38"
+        fontSize="35"
         fill={goldColor}
       >
         र

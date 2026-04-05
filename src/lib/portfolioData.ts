@@ -83,7 +83,7 @@ export const LIFECYCLE_CONFIG: Record<LifecycleStatus, {
   },
   exited: {
     label: 'Exited',
-    description: 'Investment has been settled',
+    description: 'Participation has been settled',
     color: 'zinc',
   },
   raise_failed: {

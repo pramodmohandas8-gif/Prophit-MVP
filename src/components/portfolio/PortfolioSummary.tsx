@@ -31,7 +31,7 @@ export function PortfolioSummary({
       highlight: false,
     },
     {
-      label: 'Total Units Held',
+      label: 'Total Participation',
       value: totalUnits.toString(),
       highlight: false,
     },
@@ -58,7 +58,7 @@ export function PortfolioSummary({
 
   return (
     <div className="bg-[#0c0c0c] border border-white/[0.06] rounded-2xl p-6">
-      <h2 className="text-zinc-400 text-xs uppercase tracking-wider mb-6">Portfolio Snapshot</h2>
+      <h2 className="text-zinc-400 text-xs uppercase tracking-wider mb-6">Holdings Snapshot</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {stats.map((stat) => (
           <div key={stat.label}>
